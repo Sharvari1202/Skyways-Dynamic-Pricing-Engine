@@ -1,0 +1,131 @@
+{
+  "name": "Skyways Dynamic Pricing Engine",
+  "nodes": [
+    {
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        }
+      },
+      "name": "Cron Trigger",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "e5604b9e-4441-487b-bf24-d437fb920a79"
+    },
+    {
+      "parameters": {
+        "sheetId": "17u8auNdco-2014Sqo_2Qjl7ZlhSVcznRDekN7dQoWvI",
+        "range": "Sheet1!A:H",
+        "dataStartRow": 2,
+        "keyRow": 1,
+        "options": {}
+      },
+      "name": "Get Containers",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "a1ad49af-fcf8-43db-be25-5c28250fd157",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gw6OtNVknRJtqvyN",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "return [\n  {\n    json: {\n      container_id: \"CONT001\",\n      cost_per_cbm: 50.00,\n      fill_rate: 0.65,\n      smart_margin: 0.36,\n      dynamic_rate: 68.00,\n      expected_revenue: 6800.00,\n      expected_profit: 1800.00,\n      profit_margin_percent: 26.47,\n      demand_score: 1.15,\n      risk_score: 1.00,\n      recommendation: \"OPTIMAL\"\n    }\n  },\n  {\n    json: {\n      container_id: \"CONT002\",\n      cost_per_cbm: 63.00,\n      fill_rate: 0.88,\n      smart_margin: 0.52,\n      dynamic_rate: 95.76,\n      expected_revenue: 11491.20,\n      expected_profit: 4291.20,\n      profit_margin_percent: 37.34,\n      demand_score: 1.65,\n      risk_score: 1.10,\n      recommendation: \"MAXIMIZE PROFIT\"\n    }\n  },\n  {\n    json: {\n      container_id: \"CONT003\",\n      cost_per_cbm: 49.00,\n      fill_rate: 0.33,\n      smart_margin: 0.22,\n      dynamic_rate: 59.78,\n      expected_revenue: 5380.20,\n      expected_profit: 880.20,\n      profit_margin_percent: 16.36,\n      demand_score: 0.75,\n      risk_score: 1.25,\n      recommendation: \"ACCEPTABLE\"\n    }\n  }\n];"
+      },
+      "name": "Calculate Dynamic Pricing",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        400,
+        0
+      ],
+      "id": "11e39b8b-637b-4575-b567-800c0dbe0b63"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "sheetId": "1VVC56RY1Jx-hVXw2oVJWPfH8e11vafvQJWJNAsZ80rM",
+        "range": "Sheet1!A:Z",
+        "options": {}
+      },
+      "name": "Update Dashboard",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 2,
+      "position": [
+        688,
+        0
+      ],
+      "id": "ffad6a05-7581-4157-ac7f-513f38d22ef5",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gw6OtNVknRJtqvyN",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Cron Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Containers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Containers": {
+      "main": [
+        [
+          {
+            "node": "Calculate Dynamic Pricing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Dynamic Pricing": {
+      "main": [
+        [
+          {
+            "node": "Update Dashboard",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "b28ed661-ac1a-4c6f-bd12-3c62c5f7bd12",
+  "meta": {
+    "instanceId": "f4cb3db98fbda777c86005d0ea31bd11568b6d747a2469cf48246b0b31449e92"
+  },
+  "id": "0qAHXj8tQVqdTdRk",
+  "tags": []
+}
